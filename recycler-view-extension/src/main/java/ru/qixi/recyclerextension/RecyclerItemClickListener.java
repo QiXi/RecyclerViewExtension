@@ -3,10 +3,9 @@ package ru.qixi.recyclerextension;
 import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-
-import static android.view.GestureDetector.SimpleOnGestureListener;
 
 
 /**
@@ -20,14 +19,11 @@ public abstract class RecyclerItemClickListener extends RecyclerView.SimpleOnIte
 
 
     public RecyclerItemClickListener(Context pContext) {
-        mGestureDetector = new GestureDetectorCompat(pContext, new SimpleOnGestureListener() {
+        mGestureDetector = new GestureDetectorCompat(pContext, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                View childView = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-                if (childView == null) {
-                    return false;
-                }
-                int position = mRecyclerView.getChildAdapterPosition(childView);
+            public boolean onSingleTapUp(MotionEvent pMotionEvent) {
+                View childView = mRecyclerView.findChildViewUnder(pMotionEvent.getX(), pMotionEvent.getY());
+                int position = getViewPosition(mRecyclerView, childView);
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick(childView, position);
                     return true;
@@ -39,16 +35,20 @@ public abstract class RecyclerItemClickListener extends RecyclerView.SimpleOnIte
     }
 
 
+    private int getViewPosition(RecyclerView recyclerView, View view) {
+        return (view == null) ? RecyclerView.NO_POSITION : recyclerView.getChildAdapterPosition(view);
+    }
+
+
     @Override
-    public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
-        //Log.d("view:%s e:%s", view, e);
-        mRecyclerView = view;
-        mGestureDetector.onTouchEvent(e);
+    public boolean onInterceptTouchEvent(RecyclerView pChildView, MotionEvent pMotionEvent) {
+        mRecyclerView = pChildView;
+        mGestureDetector.onTouchEvent(pMotionEvent);
         return false;
     }
 
 
-    public abstract void onItemClick(View view, int position);
+    public abstract void onItemClick(View childView, int position);
 
 
 }
