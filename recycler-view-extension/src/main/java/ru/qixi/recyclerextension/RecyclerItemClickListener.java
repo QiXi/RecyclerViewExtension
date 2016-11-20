@@ -28,6 +28,7 @@ public abstract class RecyclerItemClickListener extends RecyclerView.SimpleOnIte
                     onItemClick(childView, position);
                     return true;
                 }
+                onSingleTap();
                 return false;
             }
         });
@@ -50,5 +51,9 @@ public abstract class RecyclerItemClickListener extends RecyclerView.SimpleOnIte
 
     public abstract void onItemClick(View childView, int position);
 
+
+    public void onSingleTap() {
+
+    }
 
 }
